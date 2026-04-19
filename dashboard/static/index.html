@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>llmscope</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">◈</span>
+                <span class="logo-text">llmscope</span>
+            </div>
+
+            <div class="project-selector">
+                <label class="label">PROJECT</label>
+                <select id="projectSelect">
+                    <option value="">Loading...</option>
+                </select>
+            </div>
+
+            <nav class="nav">
+                <a class="nav-item active" data-view="overview">
+                    <span class="nav-icon">▣</span> Overview
+                </a>
+                <a class="nav-item" data-view="traces">
+                    <span class="nav-icon">≡</span> Traces
+                </a>
+                <a class="nav-item" data-view="errors">
+                    <span class="nav-icon">⚠</span> Errors
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <span class="version">v1.0.0</span>
+                <a href="https://github.com/raghavchitkara36/llmscope" target="_blank" class="gh-link">GitHub ↗</a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main">
+
+            <!-- Overview View -->
+            <div id="view-overview" class="view active">
+                <div class="view-header">
+                    <h1>Overview</h1>
+                    <span class="view-subtitle" id="overviewSubtitle">—</span>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">TOTAL REQUESTS</div>
+                        <div class="stat-value" id="statTotalTraces">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">AVG LATENCY</div>
+                        <div class="stat-value" id="statAvgLatency">—</div>
+                        <div class="stat-unit">ms</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">TOTAL COST</div>
+                        <div class="stat-value" id="statTotalCost">—</div>
+                        <div class="stat-unit">USD</div>
+                    </div>
+                    <div class="stat-card accent">
+                        <div class="stat-label">ERRORS</div>
+                        <div class="stat-value" id="statErrorCount">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">TOTAL TOKENS</div>
+                        <div class="stat-value" id="statTotalTokens">—</div>
+                    </div>
+                </div>
+
+                <div class="recent-section">
+                    <div class="section-header">
+                        <span>RECENT TRACES</span>
+                        <a class="view-all" data-view="traces">View all →</a>
+                    </div>
+                    <div id="recentTraces" class="trace-list"></div>
+                </div>
+            </div>
+
+            <!-- Traces View -->
+            <div id="view-traces" class="view">
+                <div class="view-header">
+                    <h1>Traces</h1>
+                    <div class="filters">
+                        <input type="text" id="filterProvider" placeholder="Provider" class="filter-input" />
+                        <input type="text" id="filterModel" placeholder="Model" class="filter-input" />
+                        <select id="filterError" class="filter-input">
+                            <option value="">All</option>
+                            <option value="false">Success</option>
+                            <option value="true">Errors only</option>
+                        </select>
+                        <button id="applyFilter" class="btn-filter">Filter</button>
+                    </div>
+                </div>
+
+                <table class="trace-table">
+                    <thead>
+                        <tr>
+                            <th>TIME</th>
+                            <th>PROVIDER</th>
+                            <th>MODEL</th>
+                            <th>LATENCY</th>
+                            <th>TOKENS</th>
+                            <th>STATUS</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="traceTableBody">
+                        <tr>
+                            <td colspan="7" class="empty-state">Loading traces...</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    <button id="prevPage" class="btn-page" disabled>← Prev</button>
+                    <span id="pageInfo" class="page-info">Page 1</span>
+                    <button id="nextPage" class="btn-page">Next →</button>
+                </div>
+            </div>
+
+            <!-- Trace Detail View -->
+            <div id="view-detail" class="view">
+                <div class="view-header">
+                    <button class="back-btn" id="backBtn">← Back to Traces</button>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="detail-meta">
+                        <div class="meta-row">
+                            <span class="meta-label">TRACE ID</span>
+                            <span class="meta-value mono" id="detailTraceID">—</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">PROVIDER</span>
+                            <span class="meta-value" id="detailProvider">—</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">MODEL</span>
+                            <span class="meta-value" id="detailModel">—</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">LATENCY</span>
+                            <span class="meta-value" id="detailLatency">—</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">INPUT TOKENS</span>
+                            <span class="meta-value" id="detailInputTokens">—</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">OUTPUT TOKENS</span>
+                            <span class="meta-value" id="detailOutputTokens">—</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">COST</span>
+                            <span class="meta-value" id="detailCost">—</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">STATUS</span>
+                            <span class="meta-value" id="detailStatus">—</span>
+                        </div>
+                        <div class="meta-row" id="detailTagsRow">
+                            <span class="meta-label">TAGS</span>
+                            <span class="meta-value" id="detailTags">—</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-conversation">
+                        <div class="conv-section">
+                            <div class="conv-label">PROMPT</div>
+                            <div id="detailPrompt" class="conv-content"></div>
+                        </div>
+                        <div class="conv-section">
+                            <div class="conv-label">RESPONSE</div>
+                            <div id="detailResponse" class="conv-content response-content"></div>
+                        </div>
+                        <div class="conv-section error-section" id="detailErrorSection" style="display:none">
+                            <div class="conv-label error-label">ERROR</div>
+                            <div id="detailError" class="conv-content error-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Errors View -->
+            <div id="view-errors" class="view">
+                <div class="view-header">
+                    <h1>Error Log</h1>
+                </div>
+                <table class="trace-table">
+                    <thead>
+                        <tr>
+                            <th>TIME</th>
+                            <th>PROVIDER</th>
+                            <th>MODEL</th>
+                            <th>ERROR</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="errorTableBody">
+                        <tr>
+                            <td colspan="5" class="empty-state">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

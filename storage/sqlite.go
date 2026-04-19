@@ -213,12 +213,19 @@ func (s *SQLiteStorage) GetTraces(ctx context.Context, projectID string, filter 
 	}
 
 	query += " ORDER BY request_timestamp DESC"
+	query += " LIMIT ? OFFSET ?"
+
+	args = append(args, limit, offset)
 
 	rows, err := s.db.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, fmt.Errorf("storage: querying traces: %w", err)
 	}
 	defer rows.Close()
+
+	// fmt.Println(query)
+	// fmt.Println("args ", args)
+	// fmt.Println(rows)
 
 	var traces []*models.Trace
 	for rows.Next() {

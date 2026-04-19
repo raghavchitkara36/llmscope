@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	ollama "github.com/ollama/ollama/api"
 	"github.com/raghavchitkara36/llmscope"
@@ -15,6 +16,7 @@ func main() {
 	// 1 — init llmscope — creates SQLite at ./llmscope-traces
 	scope, err := llmscope.New(llmscope.Config{
 		StoragePath: "./llmscope-traces",
+		DevMode:     true,
 	})
 	if err != nil {
 		log.Fatalf("failed to init llmscope: %v", err)
@@ -59,5 +61,6 @@ func main() {
 	fmt.Println("\n\n--- llmscope captured this trace ---")
 	fmt.Printf("Response length : %d characters\n", len(fullResponse))
 	fmt.Println("Trace saved to  : ./llmscope-traces/llmscope.db")
+	time.Sleep(1000 * time.Second)
 	fmt.Println("------------------------------------")
 }

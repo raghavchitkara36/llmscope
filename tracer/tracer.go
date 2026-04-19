@@ -140,7 +140,7 @@ func (t *Tracer) GetTraces(
 ) ([]*models.Trace, int64, error) {
 
 	// fetch all matching traces from storage
-	all, err := t.storage.GetTraces(ctx, projectID, filter, 0, 0)
+	all, err := t.storage.GetTraces(ctx, projectID, filter, limit, offset)
 	if err != nil {
 		return nil, 0, fmt.Errorf("tracer: getting traces: %w", err)
 	}
