@@ -263,6 +263,13 @@ Dashboard (optional)
 
 ---
 
+## Limitations (v0.1.0)
+
+- **Single instance only** — each app instance has its own SQLite database
+- **No distributed tracing** — traces from multiple app instances are not aggregated
+- **Persistent storage required** — in containers, mount `/path/to/traces` as a volume
+
+
 ## Roadmap
 
 - [x] Core tracer with async writes
@@ -277,6 +284,7 @@ Dashboard (optional)
 - [ ] Cost explorer with pricing table
 - [ ] Prompt versioning
 - [ ] OpenTelemetry export
+- [ ] Distributed tracing are planned for v0.2.0+
 
 ---
 
